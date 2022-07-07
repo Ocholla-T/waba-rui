@@ -1,44 +1,36 @@
-import { FC, FormEvent, FormEventHandler, MouseEvent, MouseEventHandler, ReactElement } from 'react'
-import { CustomInput } from '@ui/input'
-import './index.scss'
-import { Link, Route } from 'react-router-dom'
+import { FC, FormEvent, FormEventHandler, ReactElement } from 'react'
+import { Link } from 'react-router-dom'
 import { CustomButton } from '@ui/button'
+import { CustomInput } from '@ui/input'
+import './_index.scss'
 
-type Props = {}
+type loginProps = {}
 
-export const Register: FC = (props: Props): ReactElement => {
-  const handleSubmit: FormEventHandler<HTMLFormElement> | undefined = (
+export const Login: FC<loginProps> = ({}: loginProps): ReactElement => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = (
     event: FormEvent<HTMLFormElement>,
-  ) => {
+  ): void => {
     event.preventDefault()
     console.log(event.target)
   }
-
   return (
     <main className="register">
       <form action="" method="post" className="register--form" onSubmit={handleSubmit}>
         <h1 className="register--form--title">Waba</h1>
         <h3>
-          Create your account, or <Link to="/auth/login">sign in</Link>
+          Don't have an account, <Link to="/auth/register">sign up</Link>
         </h3>
         <CustomInput
           className="register--input"
+          id="username"
           label="Username"
           type="text"
-          id="password"
           autoComplete="email"
         />
         <CustomInput
           className="register--input"
-          label="Password"
           id="password"
-          type="password"
-          autoComplete="newPassword"
-        />
-        <CustomInput
-          className="register--input"
-          id="confirmPassword"
-          label="Confirm Password"
+          label="Password"
           type="password"
           autoComplete="newPassword"
         />
