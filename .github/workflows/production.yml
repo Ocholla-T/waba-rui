@@ -31,6 +31,7 @@ jobs:
 
     steps:
       - name: copy files to location with permission
-        run: sudo cp -R /home/dragon/actions-runner/waba-rui/waba-rui/waba-rui/* /var/www/html/waba/react-waba-api
-        with:
-          password: ${{ secrets.SERVER_SECRET}}
+        env:
+          SERVER_SECRET: ${{ secrets.SERVER_SECRET}}
+        run: |
+          echo "$SERVER_SECRET" | sudo -S cp -R /home/dragon/actions-runner/waba-rui/waba-rui/waba-rui/* /var/www/html/waba/react-waba-api
