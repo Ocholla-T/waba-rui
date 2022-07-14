@@ -1,0 +1,40 @@
+.dashboard {
+  font-family: 'Mulish', sans-serif;
+  padding: 2rem 7rem;
+  &--header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    > h1 {
+      font-size: 1.25rem;
+    }
+  }
+
+  &--content {
+    display: flex;
+
+    &--table {
+      margin-top: 2rem;
+      width: 100%;
+      border-collapse: collapse;
+
+      &--header {
+        > th {
+          padding: 0.5rem 1rem;
+          font-size: 0.875rem;
+          border-bottom: 1px solid #0f8b8d;
+          opacity: 70%;
+        }
+      }
+    }
+  }
+}
+
+.container-override {
+  width: fit-content !important;
+
+  > input {
+    font-weight: 400;
+  }
+}

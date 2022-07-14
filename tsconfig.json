@@ -13,7 +13,9 @@
     "noEmit": true,
     "paths": {
       "@ui/*": ["./components/ui/*"],
-      "@pages/*": ["./components/pages/*"]
+      "@pages/*": ["./components/pages/*"],
+      "@images/*": ["./assets/images/*"],
+      "@services/*": ["./services/*"]
     },
     "resolveJsonModule": true,
     "skipLibCheck": true,
