@@ -79,7 +79,7 @@ export const Register: FC = (props: Props): ReactElement => {
         AuthService.setLocalStorage(response)
         setIsRegisterFormActive(false)
         setIsApartmentOnboardingFormActive(true)
-        history.replaceState({}, '', 'http://localhost:3000/onboarding/apartments')
+        history.replaceState({}, '', 'https://wabaui.rascan.co.ke/onboarding/apartments')
       })
       .catch((error) => {
         console.error(error)
@@ -124,7 +124,7 @@ export const Register: FC = (props: Props): ReactElement => {
     event.preventDefault()
     setIsApartmentOnboardingFormActive(false)
     setIsUtilityChargesFormActive(true)
-    history.replaceState({}, '', 'http://localhost:3000/onboarding/apartments')
+    history.replaceState({}, '', 'https://wabaui.rascan.co.ke/onboarding/configuration')
   }
   return (
     <main className="register">
