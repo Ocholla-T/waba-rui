@@ -1,4 +1,4 @@
-.register {
+.login {
   align-items: center;
   display: flex;
   height: 100%;
@@ -19,7 +19,7 @@
     box-shadow: 5px 5px 13px #aeaeae, -5px -5px 13px #ffffff;
 
     &--logo {
-      width: 70px;
+      width: 64px;
     }
 
     &--title {
@@ -37,6 +37,7 @@
     &--option {
       font-size: 16px;
       font-weight: 400;
+      // opacity: 80%;
 
       > a {
         color: #3bacb6 !important;
@@ -44,40 +45,5 @@
         text-decoration: none;
       }
     }
-  }
-}
-
-.card {
-  width: 33.33333%;
-  padding: 4rem 3rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  background: #ffffff;
-  box-shadow: 5px 5px 13px #aeaeae, -5px -5px 13px #ffffff;
-  gap: 1rem;
-
-  &--text {
-    align-self: start;
-
-    &__subtitle {
-      line-height: 1.5;
-    }
-
-    &__title {
-      font-size: 1.75em;
-      color: #3bacb6;
-    }
-  }
-  &--image {
-    width: 120px;
-    margin: 1rem 0;
-  }
-
-  &--input {
-    padding: 1rem;
-    margin-top: 1rem;
   }
 }
