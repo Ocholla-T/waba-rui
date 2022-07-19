@@ -13,6 +13,12 @@ export class AuthService {
     return waba_caretaker
   }
 
+  static isAuthenticated(): boolean {
+    const token: string = JSON.parse(this.getLocalStorage() as string).data.token
+
+    return token ? true : false
+  }
+
   // static isLoggedIn(): boolean {
   //   return moment().isBefore(this.getExpiration())
   // }

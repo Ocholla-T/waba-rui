@@ -15,7 +15,8 @@
       "@ui/*": ["./components/ui/*"],
       "@pages/*": ["./components/pages/*"],
       "@images/*": ["./assets/images/*"],
-      "@services/*": ["./services/*"]
+      "@services/*": ["./services/*"],
+      "@utils/*": ["./components/utils/*"]
     },
     "resolveJsonModule": true,
     "skipLibCheck": true,
