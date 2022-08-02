@@ -10,7 +10,7 @@ const customAxios = axios.create({
 
 // Step-2: Create request, response & error handlers
 const requestHandler = (request: AxiosRequestConfig<any>) => {
-  const caretaker = JSON.parse(AuthService.getLocalStorage() as string)
+  const caretaker = AuthService.getLocalStorage()
 
   if (!request) {
     request = {}
