@@ -1,0 +1,19 @@
+.onboarding {
+  &--text {
+    font-size: 1em;
+    margin-bottom: 1rem;
+    &--title {
+      line-height: 2em;
+      font-size: 1.5em;
+      color: #3bacb6;
+      margin-bottom: 1rem;
+    }
+    &--subtitle {
+      letter-spacing: 0.3125px;
+      color: #00000099;
+    }
+  }
+  &--image {
+    width: 30%;
+  }
+}
