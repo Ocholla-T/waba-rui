@@ -1,5 +1,5 @@
 import Logo from '@images/logo.png'
-import { Box, Button, Card, TextField } from '@mui/material'
+import { Box, Button, Card, Link, TextField, Typography } from '@mui/material'
 import { AuthService } from '@services/auth'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import React, {
@@ -54,6 +54,10 @@ export const Login: FC<LoginProps> = ({}: LoginProps): ReactElement => {
       .catch((error) => {
         console.log(error)
       })
+  }
+
+  const goToRegister = () => {
+    navigate('/auth/register')
   }
 
   return (
@@ -121,6 +125,12 @@ export const Login: FC<LoginProps> = ({}: LoginProps): ReactElement => {
           >
             Generate Code
           </Button>
+          <Typography sx={{ marginTop: '1.1875rem' }}>
+            Don't have an account,{' '}
+            <Link underline="none" sx={{ cursor: 'pointer' }} onClick={goToRegister}>
+              Register
+            </Link>
+          </Typography>
         </Card>
       </Box>
     </main>

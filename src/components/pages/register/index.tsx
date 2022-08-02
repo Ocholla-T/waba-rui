@@ -3,7 +3,7 @@ import './index.scss'
 import Logo from '@images/logo.png'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
-import { Card, TextField } from '@mui/material'
+import { Card, Link, TextField, Typography } from '@mui/material'
 
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { AuthService } from '@services/auth'
@@ -95,6 +95,10 @@ export const Register: FC<RegisterProps> = ({ toggleIsRegisteringState }): React
       })
   }
 
+  const goToLogin = () => {
+    navigate('/auth/login')
+  }
+
   return (
     <main className="register">
       <Box
@@ -180,6 +184,12 @@ export const Register: FC<RegisterProps> = ({ toggleIsRegisteringState }): React
           >
             Register
           </Button>
+          <Typography sx={{ marginTop: '1.1875rem' }}>
+            Already have an account,{' '}
+            <Link underline="none" sx={{ cursor: 'pointer' }} onClick={goToLogin}>
+              Sign In
+            </Link>
+          </Typography>
         </Card>
       </Box>
     </main>
