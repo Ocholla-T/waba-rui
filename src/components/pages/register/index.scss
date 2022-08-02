@@ -1,32 +1,26 @@
-.register-form {
-  &--title {
-    font-family: 'Kalam', cursive;
-    color: #00aaa7;
-    letter-spacing: 2px;
-    line-height: 1.5;
-  }
-
-  &--image {
-    width: 64px;
-    margin-top: -0.25rem;
-  }
-
-  &--text {
-    width: 100%;
-    margin: 0.5rem 0 0.875rem 0;
-    &__subtitle {
-      line-height: 2;
+.register {
+  &-form {
+    &--title {
+      font-family: 'Kalam', cursive;
+      color: #00aaa7;
+      letter-spacing: 2px;
+      line-height: 1.5;
     }
-    &__desc {
-      letter-spacing: 1.1px;
-      font-size: 14px;
-    }
-  }
 
-  &--input {
-    & .MuiOutlinedInput-root {
-      &.Mui-focused fieldset {
-        border-color: '#00aaa7';
+    &--image {
+      width: 64px;
+      margin-top: -0.25rem;
+    }
+
+    &--text {
+      width: 100%;
+      margin: 0.5rem 0 0.875rem 0;
+      &__subtitle {
+        line-height: 2;
+      }
+      &__desc {
+        letter-spacing: 1.1px;
+        font-size: 14px;
       }
     }
   }
