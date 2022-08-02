@@ -10,13 +10,15 @@ export class AuthService {
   static getLocalStorage() {
     const waba_caretaker = localStorage.getItem('waba_caretaker')
 
-    return waba_caretaker
+    return JSON.parse(waba_caretaker as string)
   }
 
   static isAuthenticated(): boolean {
-    const token: string = JSON.parse(this.getLocalStorage() as string).data.token
+    return localStorage.getItem('waba_caretaker') ? true : false
+  }
 
-    return token ? true : false
+  static logout(): void {
+    localStorage.removeItem('waba_caretaker')
   }
 
   // static isLoggedIn(): boolean {
@@ -25,11 +27,6 @@ export class AuthService {
 
   // static isLoggedOut(): boolean {
   //   return !this.isLoggedIn()
-  // }
-
-  // static logout(): void {
-  //   localStorage.removeItem('token')
-  //   localStorage.removeItem('expiresIn')
   // }
 
   // static getExpiration(): Moment {
