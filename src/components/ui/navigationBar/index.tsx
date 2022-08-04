@@ -22,7 +22,7 @@ export const NavigationBar: FC<NavigationBarProps> = ({}): ReactElement => {
   }
 
   return (
-    <AppBar color="inherit">
+    <AppBar color="inherit" sx={{ position: 'relative' }}>
       <Toolbar sx={{ justifyContent: 'space-between ' }}>
         <div className="nav--title">
           <img className="nav--title--logo" src={Logo} alt="waba logo" />
@@ -32,9 +32,10 @@ export const NavigationBar: FC<NavigationBarProps> = ({}): ReactElement => {
             component="div"
             sx={{
               display: { xs: 'none', sm: 'block' },
-              fontFamily: ['"Kalam", cursive'],
-              color: '#00aaa7',
-              fontWeight: 700,
+              fontFamily: ['"nunito", sans-serif'],
+              // color: '#00aaa7',
+              fontWeight: 600,
+              fontSize: 16,
             }}
           >
             {name}
