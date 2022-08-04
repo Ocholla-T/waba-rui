@@ -52,7 +52,7 @@ export const Verification: FC<VerificationProps> = ({
       .request(config)
       .then((response: AxiosResponse<any, any>) => {
         AuthService.setLocalStorage(response)
-        if (isRegistering) {
+        if (isRegistering || AuthService.getLocalStorage().data.apartment === null) {
           toggleIsRegisteringState(false)
 
           navigate('/onboarding')
