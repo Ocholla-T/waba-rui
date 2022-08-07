@@ -10,17 +10,35 @@ import {
   Typography,
 } from '@mui/material'
 import { CustomBreadcrumbs } from '@ui/breadcrumbs'
-import { ChangeEventHandler, FC, MouseEventHandler, ReactElement, useState } from 'react'
+import { ChangeEventHandler, FC, MouseEventHandler, ReactElement, useEffect, useState } from 'react'
 import { Close } from '@mui/icons-material'
 import { pink } from '@mui/material/colors'
 
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
 import customAxios from '@services/interceptor'
 import { AuthService } from '@services/auth'
+import { HouseTable } from './table'
+
+type House = {
+  house_number: string
+  tenant_id: string
+  tenant: string
+  tenancy: string
+}
+
+type Errors = {
+  house_number: string[]
+}
 
 export const Houses: FC = (): ReactElement => {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState<boolean>(false)
   const [inputValue, setInputValue] = useState({ house_number: '' })
+  const [houses, setHouses] = useState<House[]>([
+    { house_number: '', tenant_id: '', tenant: '', tenancy: '' },
+  ])
+  const [errors, setErrors] = useState<Errors>({ house_number: [''] })
+
+  const apartmentID: string = AuthService.getLocalStorage().data.apartment.id
 
   const handleOpen = () => {
     setIsOpen(true)
@@ -32,6 +50,8 @@ export const Houses: FC = (): ReactElement => {
   const handleChange: ChangeEventHandler<HTMLInputElement> = (event): void => {
     const { id, value } = event.target
 
+    setErrors({ house_number: [''] })
+
     setInputValue({
       ...inputValue,
       [id]: value,
@@ -39,7 +59,9 @@ export const Houses: FC = (): ReactElement => {
   }
 
   const saveHouseDetails: MouseEventHandler<HTMLButtonElement> = (event) => {
-    const apartmentID: string = AuthService.getLocalStorage().data.apartment.id
+    event.preventDefault()
+
+    setErrors({ house_number: [''] })
 
     const config: AxiosRequestConfig<any> = {
       method: 'POST',
@@ -53,12 +75,34 @@ export const Houses: FC = (): ReactElement => {
     customAxios
       .request(config)
       .then((response: AxiosResponse<any>) => {
-        console.log(response)
+        handleClose()
+        fetchHouses()
+      })
+      .catch((error) => {
+        if (error instanceof AxiosError) {
+          if ((error.response as AxiosResponse<any, any>).status === 422) {
+            setErrors({ ...errors, ...(error.response as AxiosResponse<any, any>).data.errors })
+          }
+        }
+      })
+  }
+
+  const fetchHouses = () => {
+    customAxios
+      .get(`/apartments/${apartmentID}/houses`)
+      .then((response: AxiosResponse<any>) => {
+        setHouses(() => {
+          return [...response.data.data]
+        })
       })
       .catch((error) => {
         console.error(error)
       })
   }
+
+  useEffect(() => {
+    fetchHouses()
+  }, [])
 
   return (
     <Box sx={{ minHeight: 'calc(100vh - 4rem)', px: { lg: '10rem', xs: '1.5rem' }, py: '3rem' }}>
@@ -67,6 +111,7 @@ export const Houses: FC = (): ReactElement => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          mb: '1rem',
         }}
       >
         <div>
@@ -122,6 +167,8 @@ export const Houses: FC = (): ReactElement => {
               type="text"
               value={inputValue.house_number}
               onChange={handleChange}
+              error={errors.house_number[0].length > 0}
+              helperText={errors.house_number[0].length > 0 && `${errors.house_number[0]}`}
             />
           </DialogContent>
           <DialogActions sx={{ px: '24px', mb: '1rem' }}>
@@ -138,6 +185,7 @@ export const Houses: FC = (): ReactElement => {
           </DialogActions>
         </Dialog>
       </Box>
+      <HouseTable houses={houses} />
     </Box>
   )
 }
