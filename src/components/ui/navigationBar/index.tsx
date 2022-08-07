@@ -33,7 +33,7 @@ export const NavigationBar: FC<NavigationBarProps> = ({}): ReactElement => {
             sx={{
               display: { xs: 'none', sm: 'block' },
               fontFamily: ['"nunito", sans-serif'],
-              // color: '#00aaa7',
+              color: 'rgba(0, 0, 0, 0.6)',
               fontWeight: 600,
               fontSize: 16,
             }}
