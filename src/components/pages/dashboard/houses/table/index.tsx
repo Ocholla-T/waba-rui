@@ -1,8 +1,6 @@
 import {
   Box,
   IconButton,
-  Menu,
-  MenuItem,
   Table,
   TableBody,
   TableCell,
@@ -10,37 +8,38 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material'
-import MoreVertIcon from '@mui/icons-material/MoreVert'
 import VillaOutlinedIcon from '@mui/icons-material/VillaOutlined'
 
-import { FC, memo, MutableRefObject, ReactElement, useRef, useState } from 'react'
+import { FC, memo, ReactElement } from 'react'
+import { ActionsPopover } from './popover'
 
 type Props = {
   houses: House[]
 }
 
 type House = {
+  id: string
   house_number: string
   tenant_id: string
-  tenant: string
-  tenancy: string
+  tenant: {
+    id: string
+    name: string
+    nickname: string
+    phone: string
+  }
+  tenancy: {
+    running_balance: string
+  }
 }
 
 export const HouseTable: FC<Props> = memo(({ houses }): ReactElement => {
-  const buttonRef: MutableRefObject<HTMLButtonElement[]> = useRef(new Array())
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
-
-  const open = Boolean(anchorEl)
-  const handleOpen = (index: number) => {
-    setAnchorEl(buttonRef.current[index])
-  }
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
-
   return (
     <TableContainer component={Box}>
-      <Table aria-label="table of houses, tenants and water bill balance" size="small" stickyHeader>
+      <Table
+        aria-label="table of houses, tenants and water bill balance"
+        padding="none"
+        stickyHeader
+      >
         <TableHead>
           <TableRow>
             <TableCell
@@ -90,53 +89,18 @@ export const HouseTable: FC<Props> = memo(({ houses }): ReactElement => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {houses.map(({ house_number, tenant }, index) => (
-            <TableRow key={house_number}>
+          {houses.map(({ house_number, tenant, id, tenancy }) => (
+            <TableRow key={house_number} hover>
               <TableCell sx={{ alignItems: 'center' }}>
                 <IconButton size="small" sx={{ mr: '.25rem' }}>
                   <VillaOutlinedIcon fontSize="inherit" sx={{ color: 'rgb(46, 204, 113)' }} />
                 </IconButton>
                 {house_number}
               </TableCell>
-              <TableCell>{tenant ?? 'n/a'}</TableCell>
-              <TableCell>-</TableCell>
+              <TableCell>{tenant?.name ?? 'n/a'}</TableCell>
+              <TableCell>{tenancy?.running_balance ?? '-'}</TableCell>
               <TableCell>
-                <IconButton
-                  ref={(element: HTMLButtonElement | null) => {
-                    buttonRef.current.push(element as HTMLButtonElement)
-                  }}
-                  id="actions-button"
-                  aria-controls={open ? 'actions-menu' : undefined}
-                  aria-haspopup="menu"
-                  aria-expanded={open ? 'true' : undefined}
-                  onClick={() => handleOpen(index)}
-                >
-                  <MoreVertIcon />
-                </IconButton>
-                <Menu
-                  id="actions-menu"
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  onClose={handleClose}
-                  MenuListProps={{
-                    'aria-labelledby': 'actions-button',
-                  }}
-                  open={open}
-                  sx={{
-                    '& .MuiMenuItem-root': {
-                      fontSize: '.825rem',
-                      pr: '2.5rem',
-                    },
-                  }}
-                >
-                  <MenuItem>Rent house</MenuItem>
-                  <MenuItem>Vacate tenant</MenuItem>
-                  <MenuItem>Record Reading</MenuItem>
-                  <MenuItem>Collect Payment</MenuItem>
-                </Menu>
+                <ActionsPopover house_id={id} tenant_name={tenant?.name ?? 'na'} />
               </TableCell>
             </TableRow>
           ))}
