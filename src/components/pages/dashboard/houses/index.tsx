@@ -10,7 +10,15 @@ import {
   Typography,
 } from '@mui/material'
 import { CustomBreadcrumbs } from '@ui/breadcrumbs'
-import { ChangeEventHandler, FC, MouseEventHandler, ReactElement, useEffect, useState } from 'react'
+import {
+  ChangeEventHandler,
+  createContext,
+  FC,
+  MouseEventHandler,
+  ReactElement,
+  useEffect,
+  useState,
+} from 'react'
 import { Close } from '@mui/icons-material'
 import { pink } from '@mui/material/colors'
 
@@ -20,21 +28,37 @@ import { AuthService } from '@services/auth'
 import { HouseTable } from './table'
 
 type House = {
+  id: string
   house_number: string
   tenant_id: string
-  tenant: string
-  tenancy: string
+  tenant: {
+    id: string
+    name: string
+    nickname: string
+    phone: string
+  }
+  tenancy: {
+    running_balance: string
+  }
 }
 
 type Errors = {
   house_number: string[]
 }
 
+export const HousesContext = createContext({ fetchHouses: () => {} })
+
 export const Houses: FC = (): ReactElement => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [inputValue, setInputValue] = useState({ house_number: '' })
   const [houses, setHouses] = useState<House[]>([
-    { house_number: '', tenant_id: '', tenant: '', tenancy: '' },
+    {
+      house_number: '',
+      tenant_id: '',
+      tenant: { id: '', name: '', nickname: '', phone: '' },
+      tenancy: { running_balance: '' },
+      id: '',
+    },
   ])
   const [errors, setErrors] = useState<Errors>({ house_number: [''] })
 
@@ -91,9 +115,7 @@ export const Houses: FC = (): ReactElement => {
     customAxios
       .get(`/apartments/${apartmentID}/houses`)
       .then((response: AxiosResponse<any>) => {
-        setHouses(() => {
-          return [...response.data.data]
-        })
+        setHouses([...response.data.data])
       })
       .catch((error) => {
         console.error(error)
@@ -105,7 +127,7 @@ export const Houses: FC = (): ReactElement => {
   }, [])
 
   return (
-    <Box sx={{ minHeight: 'calc(100vh - 4rem)', px: { lg: '10rem', xs: '1.5rem' }, py: '3rem' }}>
+    <Box sx={{ minHeight: 'calc(100vh - 4rem)', px: { lg: '8rem', xs: '1.5rem' }, py: '3rem' }}>
       <Box
         sx={{
           display: 'flex',
@@ -185,7 +207,9 @@ export const Houses: FC = (): ReactElement => {
           </DialogActions>
         </Dialog>
       </Box>
-      <HouseTable houses={houses} />
+      <HousesContext.Provider value={{ fetchHouses }}>
+        <HouseTable houses={houses} />
+      </HousesContext.Provider>
     </Box>
   )
 }
