@@ -22,7 +22,11 @@ export const Modal: FC<Props> = ({
 }) => {
   return (
     <>
-      <Dialog open={open} onClose={onClose}>
+      <Dialog
+        open={open}
+        onClose={onClose}
+        PaperProps={{ sx: { width: 380, maxWidth: 380, maxHeight: '90%' } }}
+      >
         <DialogTitle
           sx={{
             display: 'flex',
@@ -33,8 +37,6 @@ export const Modal: FC<Props> = ({
             borderBottom: ['1px solid rgba(0,0,0,.12)'],
             py: '.5rem',
             mb: '1rem',
-            width: 380,
-            maxHeight: '90%',
           }}
         >
           {modalTitle}
@@ -49,11 +51,9 @@ export const Modal: FC<Props> = ({
         </DialogTitle>
         <DialogContent
           sx={{
-            alignItems: 'center',
             display: 'flex',
             flexDirection: 'column',
             gap: '1.5rem',
-            justifyContent: 'center',
             py: '2rem',
           }}
         >
