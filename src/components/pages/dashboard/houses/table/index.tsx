@@ -12,24 +12,10 @@ import VillaOutlinedIcon from '@mui/icons-material/VillaOutlined'
 
 import { FC, memo, ReactElement } from 'react'
 import { ActionsPopover } from './popover'
+import { House } from '@pages/dashboard/types/houses'
 
 type Props = {
   houses: House[]
-}
-
-type House = {
-  id: string
-  house_number: string
-  tenant_id: string
-  tenant: {
-    id: string
-    name: string
-    nickname: string
-    phone: string
-  }
-  tenancy: {
-    running_balance: string
-  }
 }
 
 export const HouseTable: FC<Props> = memo(({ houses }): ReactElement => {
@@ -100,7 +86,13 @@ export const HouseTable: FC<Props> = memo(({ houses }): ReactElement => {
               <TableCell>{tenant?.name ?? 'n/a'}</TableCell>
               <TableCell>{tenancy?.running_balance ?? '-'}</TableCell>
               <TableCell>
-                <ActionsPopover house_id={id} tenant_name={tenant?.name ?? 'na'} />
+                <ActionsPopover
+                  house_id={id}
+                  tenant_name={tenant?.name ?? 'n/a'}
+                  house_number={house_number}
+                  tenant_id={tenant?.id}
+                  tenancy={tenancy}
+                />
               </TableCell>
             </TableRow>
           ))}
