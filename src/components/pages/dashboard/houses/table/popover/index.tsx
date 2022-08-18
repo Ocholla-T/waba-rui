@@ -4,51 +4,68 @@ import {
   FormEventHandler,
   MouseEventHandler,
   ReactElement,
+  SyntheticEvent,
   useContext,
   useState,
 } from 'react'
-import { IconButton, Menu, MenuItem, TextField, Typography } from '@mui/material'
+import {
+  DialogContentText,
+  IconButton,
+  Menu,
+  MenuItem,
+  SnackbarCloseReason,
+  TextField,
+  Typography,
+} from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { Modal } from '@ui/modal'
 import customAxios from '@services/interceptor'
 import { AuthService } from '@services/auth'
-import { AxiosResponse } from 'axios'
+import { AxiosError, AxiosResponse } from 'axios'
 import { HousesContext } from '../..'
+import { pink, red } from '@mui/material/colors'
+import { CustomSnackbar } from '@ui/snackbar/snackbar'
+import { RentHouseModal } from './modals/rentHouseModal'
+import { VacateTenantModal } from './modals/vacateTenantModal'
 
 type Props = {
   house_id: string
+  house_number: string
+  tenant_id: string
   tenant_name: string
+  tenancy: {
+    id: string
+    running_balance: string
+  }
 }
 
-export const ActionsPopover: FC<Props> = ({ house_id, tenant_name }): ReactElement => {
+export const ActionsPopover: FC<Props> = ({
+  house_id,
+  tenant_name,
+  tenant_id,
+  house_number,
+  tenancy,
+}): ReactElement => {
   const context = useContext(HousesContext)
   const [inputValue, setInputValue] = useState({
     phone: '',
     name: '',
     meter_reading: '',
   })
-  const [isRentHouseModalOpen, setIsRentHouseModalOpen] = useState<boolean>(false)
-  const [isVacateTenantModalOpen, setIsVacateTenantModalOpen] = useState<boolean>(false)
-
-  const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null)
-  const [loading, setLoading] = useState<boolean>(false)
-  const open = Boolean(anchor)
-  const id: string | undefined = open ? 'actions-popover' : undefined
-  const apartmentID: string = AuthService.getLocalStorage().data.apartment.id
+  const initialErrorValues = { 'tenant.phone': [''], meter_reading: [''] }
+  const [errors, setErrors] = useState(initialErrorValues)
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    setErrors(initialErrorValues)
     const { id, value } = event.target
 
     setInputValue({ ...inputValue, [id]: value })
   }
 
-  const handleClick: MouseEventHandler<HTMLButtonElement> = (event) => {
-    setAnchor(event.currentTarget)
-  }
-  const handleClose = () => {
-    setAnchor(null)
-  }
+  const [isRentHouseModalOpen, setIsRentHouseModalOpen] = useState<boolean>(false)
+  const [isVacateTenantModalOpen, setIsVacateTenantModalOpen] = useState<boolean>(false)
+  const [isRecordReadingModalOpen, setIsRecordReadingModalOpen] = useState<boolean>(false)
 
   const handleModalClose: (
     modal_type: string,
@@ -70,6 +87,8 @@ export const ActionsPopover: FC<Props> = ({ house_id, tenant_name }): ReactEleme
               setIsRentHouseModalOpen(false)
             case 'vacateTenant':
               setIsVacateTenantModalOpen(false)
+            case 'recordReading':
+              setIsRecordReadingModalOpen(false)
           }
         }
       }
@@ -85,13 +104,29 @@ export const ActionsPopover: FC<Props> = ({ house_id, tenant_name }): ReactEleme
         case 'vacateTenant':
           setIsVacateTenantModalOpen(state)
           handleClose()
+        case 'recordReading':
+          setIsRecordReadingModalOpen(state)
+          handleClose()
       }
     }
   }
+  const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null)
+  const open = Boolean(anchor)
+  const id: string | undefined = open ? 'actions-popover' : undefined
+
+  const handleClick: MouseEventHandler<HTMLButtonElement> = (event) => {
+    setAnchor(event.currentTarget)
+  }
+  const handleClose = () => {
+    setAnchor(null)
+  }
+
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const apartmentID: string = AuthService.getLocalStorage().data.apartment.id
 
   const addTenant: FormEventHandler<HTMLButtonElement> = (event) => {
     event.preventDefault()
-    setLoading(true)
+    setIsLoading(true)
 
     customAxios
       .post(`apartments/${apartmentID}/tenancies`, {
@@ -100,11 +135,68 @@ export const ActionsPopover: FC<Props> = ({ house_id, tenant_name }): ReactEleme
         house_id,
       })
       .then((response: AxiosResponse<any, any>) => {
-        setLoading(false)
+        setIsLoading(false)
         setIsRentHouseModalOpen(false)
         context.fetchHouses()
       })
+      .catch((error) => {
+        if (error instanceof AxiosError) {
+          if ((error.response as AxiosResponse<any, any>).status === 422) {
+            setErrors({ ...errors, ...(error.response as AxiosResponse<any, any>).data.errors })
+          }
+        }
+        setIsLoading(false)
+      })
+  }
+
+  const removeTenant: FormEventHandler<HTMLButtonElement> = (event) => {
+    event.preventDefault()
+    setIsLoading(true)
+
+    customAxios
+      .delete(`apartments/${apartmentID}/tenancies/${tenancy.id}`)
+      .then((response) => {
+        setIsLoading(false)
+        setIsVacateTenantModalOpen(false)
+        context.fetchHouses()
+      })
       .catch((error) => console.error(error))
+  }
+
+  const handleSnackbarClose: (
+    snackbar_type: string,
+  ) =>
+    | ((event: Event | SyntheticEvent<any, Event>, reason: SnackbarCloseReason) => void)
+    | undefined = (snackbar_type) => {
+    return (_, reason) => {
+      if (reason === 'clickaway') {
+        return
+      }
+
+      switch (snackbar_type) {
+        case 'rentHouse':
+          setIsRentHouseModalOpen(false)
+        case 'vacateTenant':
+          setIsVacateTenantModalOpen(false)
+        case 'recordReading':
+          setIsRecordReadingModalOpen(false)
+      }
+    }
+  }
+
+  const handleSnackbarClick: (snackbar_type: string) => MouseEventHandler<HTMLButtonElement> = (
+    snackbar_type,
+  ) => {
+    return () => {
+      switch (snackbar_type) {
+        case 'rentHouse':
+          setIsRentHouseModalOpen(false)
+        case 'vacateTenant':
+          setIsVacateTenantModalOpen(false)
+        case 'recordReading':
+          setIsRecordReadingModalOpen(false)
+      }
+    }
   }
 
   return (
@@ -138,82 +230,6 @@ export const ActionsPopover: FC<Props> = ({ house_id, tenant_name }): ReactEleme
         >
           Rent house
         </MenuItem>
-        <Modal
-          open={isRentHouseModalOpen}
-          onClose={handleModalClose('rentHouse')}
-          onClick={handleModalClick('rentHouse')}
-          modalTitle="Add a Tenant"
-          modalContent={
-            <>
-              <TextField
-                id="name"
-                type="text"
-                variant="outlined"
-                fullWidth
-                label="Tenant name"
-                size="small"
-                InputProps={{ sx: { fontSize: 16 } }}
-                InputLabelProps={{ sx: { fontSize: 15 } }}
-                required
-                value={inputValue.name}
-                sx={{
-                  mt: '.5rem',
-                }}
-                onChange={handleChange}
-              />
-              <TextField
-                id="phone"
-                type="tel"
-                variant="outlined"
-                label="Phone number"
-                fullWidth
-                size="small"
-                value={inputValue.phone}
-                required
-                InputProps={{ sx: { fontSize: 16 } }}
-                InputLabelProps={{ sx: { fontSize: 15 } }}
-                onChange={handleChange}
-              />
-              <TextField
-                id="meter_reading"
-                type="number"
-                variant="outlined"
-                label="Initial meter reading"
-                fullWidth
-                size="small"
-                required
-                value={inputValue.meter_reading}
-                InputProps={{
-                  startAdornment: <Typography sx={{ mr: '.25rem', fontSize: 14 }}>UNT</Typography>,
-                  sx: { fontSize: 16 },
-                }}
-                InputLabelProps={{ sx: { fontSize: 15 } }}
-                onChange={handleChange}
-              />
-            </>
-          }
-          modalActions={
-            <LoadingButton
-              loading={loading}
-              type="submit"
-              variant="contained"
-              size="large"
-              fullWidth
-              sx={{
-                mx: '1rem',
-                mb: '1rem',
-                backgroundColor: '#00AAA7',
-                '& .MuiLoadingButton-loadingIndicator': {
-                  color: '#00AAA7',
-                },
-              }}
-              onClick={addTenant}
-            >
-              Add Tenancy Details
-            </LoadingButton>
-          }
-        />
-
         <MenuItem
           dense
           onClick={() => {
@@ -223,18 +239,63 @@ export const ActionsPopover: FC<Props> = ({ house_id, tenant_name }): ReactEleme
         >
           Vacate tenant
         </MenuItem>
-        <Modal
-          open={isVacateTenantModalOpen}
-          onClose={handleModalClose('vacateTenant')}
-          onClick={handleModalClick('vacateTenant')}
-          modalTitle="Vacate Tenant"
-          modalContent={
-            <Typography>Are you sure you want to vacate the tenant {tenant_name}</Typography>
-          }
-        />
-        <MenuItem dense>Record reading</MenuItem>
+        <MenuItem
+          dense
+          onClick={() => {
+            handleClose()
+            setIsRecordReadingModalOpen(true)
+          }}
+        >
+          Record reading
+        </MenuItem>
         <MenuItem dense>Collect payments</MenuItem>
       </Menu>
+
+      {/* Modals */}
+      <RentHouseModal
+        errors={errors}
+        tenant_name={tenant_name}
+        open={isRentHouseModalOpen}
+        loading={isLoading}
+        value={inputValue}
+        onChange={handleChange}
+        onClose={handleModalClose('rentHouse')}
+        onClick={handleModalClick('rentHouse')}
+        handleModalClickAction={addTenant}
+        onSnackbarClose={handleSnackbarClose('rentHouse')}
+        onSnackbarClick={handleSnackbarClick('rentHouse')}
+      />
+
+      <VacateTenantModal
+        tenant_name={tenant_name}
+        house_number={house_number}
+        open={isVacateTenantModalOpen}
+        loading={isLoading}
+        onClick={handleModalClick('vacateTenant')}
+        onClose={handleModalClose('vacateTenant')}
+        onModalActionClick={removeTenant}
+        onSnackbarClose={handleSnackbarClose('vacateTenant')}
+        onSnackbarClick={handleSnackbarClick('vacateTenant')}
+      />
+
+      {/* Modal for record reading */}
+
+      {tenant_name === 'n/a' ? (
+        <CustomSnackbar
+          open={isRecordReadingModalOpen}
+          onClose={handleSnackbarClose('recordReading')}
+          onClick={handleSnackbarClick('recordReading')}
+          message="Action requires an active tenancy"
+        />
+      ) : (
+        <Modal
+          open={isRecordReadingModalOpen}
+          onClose={handleModalClose('recordReading')}
+          onClick={handleModalClick('recordReading')}
+          modalTitle="Record reading"
+          modalContent={<TextField />}
+        />
+      )}
     </>
   )
 }
