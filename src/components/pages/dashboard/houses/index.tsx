@@ -26,21 +26,7 @@ import { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
 import customAxios from '@services/interceptor'
 import { AuthService } from '@services/auth'
 import { HouseTable } from './table'
-
-type House = {
-  id: string
-  house_number: string
-  tenant_id: string
-  tenant: {
-    id: string
-    name: string
-    nickname: string
-    phone: string
-  }
-  tenancy: {
-    running_balance: string
-  }
-}
+import { House } from '@pages/dashboard/types/houses'
 
 type Errors = {
   house_number: string[]
@@ -56,7 +42,7 @@ export const Houses: FC = (): ReactElement => {
       house_number: '',
       tenant_id: '',
       tenant: { id: '', name: '', nickname: '', phone: '' },
-      tenancy: { running_balance: '' },
+      tenancy: { id: '', running_balance: '' },
       id: '',
     },
   ])
