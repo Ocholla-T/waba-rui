@@ -32,7 +32,6 @@ export const Modal: FC<Props> = ({
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            gap: '8rem',
             fontSize: '1.125em',
             borderBottom: ['1px solid rgba(0,0,0,.12)'],
             py: '.5rem',

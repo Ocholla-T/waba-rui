@@ -8,26 +8,19 @@ import {
   useContext,
   useState,
 } from 'react'
-import {
-  DialogContentText,
-  IconButton,
-  Menu,
-  MenuItem,
-  SnackbarCloseReason,
-  TextField,
-  Typography,
-} from '@mui/material'
-import { LoadingButton } from '@mui/lab'
+import { IconButton, Menu, MenuItem, SnackbarCloseReason } from '@mui/material'
+
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import { Modal } from '@ui/modal'
+
 import customAxios from '@services/interceptor'
 import { AuthService } from '@services/auth'
 import { AxiosError, AxiosResponse } from 'axios'
 import { HousesContext } from '../..'
-import { pink, red } from '@mui/material/colors'
-import { CustomSnackbar } from '@ui/snackbar/snackbar'
+
 import { RentHouseModal } from './modals/rentHouseModal'
 import { VacateTenantModal } from './modals/vacateTenantModal'
+import { RecordReadingModal } from './modals/recordReadingModal'
+import { CollectPaymentsModal } from './modals/collectPaymentsModal'
 
 type Props = {
   house_id: string
@@ -48,16 +41,20 @@ export const ActionsPopover: FC<Props> = ({
   tenancy,
 }): ReactElement => {
   const context = useContext(HousesContext)
-  const [inputValue, setInputValue] = useState({
+  const initialInputValues = {
     phone: '',
     name: '',
     meter_reading: '',
-  })
+    amount: '',
+  }
+  const [inputValue, setInputValue] = useState(initialInputValues)
   const initialErrorValues = { 'tenant.phone': [''], meter_reading: [''] }
   const [errors, setErrors] = useState(initialErrorValues)
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     setErrors(initialErrorValues)
+    setInputValue(initialInputValues)
+
     const { id, value } = event.target
 
     setInputValue({ ...inputValue, [id]: value })
@@ -66,6 +63,7 @@ export const ActionsPopover: FC<Props> = ({
   const [isRentHouseModalOpen, setIsRentHouseModalOpen] = useState<boolean>(false)
   const [isVacateTenantModalOpen, setIsVacateTenantModalOpen] = useState<boolean>(false)
   const [isRecordReadingModalOpen, setIsRecordReadingModalOpen] = useState<boolean>(false)
+  const [isCollectPaymentModalOpen, setIsCollectPaymentModalOpen] = useState<boolean>(false)
 
   const handleModalClose: (
     modal_type: string,
@@ -89,6 +87,8 @@ export const ActionsPopover: FC<Props> = ({
               setIsVacateTenantModalOpen(false)
             case 'recordReading':
               setIsRecordReadingModalOpen(false)
+            case 'collectPayment':
+              setIsCollectPaymentModalOpen(false)
           }
         }
       }
@@ -100,14 +100,18 @@ export const ActionsPopover: FC<Props> = ({
       switch (modal_type) {
         case 'rentHouse':
           setIsRentHouseModalOpen(state)
-          handleClose()
+
         case 'vacateTenant':
           setIsVacateTenantModalOpen(state)
-          handleClose()
+
         case 'recordReading':
           setIsRecordReadingModalOpen(state)
-          handleClose()
+
+        case 'collectPayment':
+          setIsCollectPaymentModalOpen(state)
       }
+
+      handleClose()
     }
   }
   const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null)
@@ -163,6 +167,46 @@ export const ActionsPopover: FC<Props> = ({
       .catch((error) => console.error(error))
   }
 
+  const recordMeterReading: FormEventHandler<HTMLButtonElement> = (event) => {
+    event.preventDefault()
+    setIsLoading(true)
+
+    customAxios
+      .post(`/apartments/${apartmentID}/meter-readings`, {
+        tenancy_id: tenancy.id,
+        meter_reading: Number(inputValue.meter_reading),
+      })
+      .then((response) => {
+        setIsLoading(false)
+        setIsRecordReadingModalOpen(false)
+        context.fetchHouses()
+      })
+      .catch((error) => {
+        console.error(error)
+        setIsLoading(false)
+      })
+  }
+
+  const recordPayment: FormEventHandler<HTMLButtonElement> = (event) => {
+    event.preventDefault()
+    setIsLoading(true)
+
+    customAxios
+      .post(`/apartments/${apartmentID}/payments`, {
+        tenancy_id: tenancy.id,
+        amount: inputValue.amount,
+      })
+      .then((response) => {
+        setIsLoading(false)
+        setIsCollectPaymentModalOpen(false)
+        context.fetchHouses()
+      })
+      .catch((error) => {
+        console.error(error)
+        setIsLoading(false)
+      })
+  }
+
   const handleSnackbarClose: (
     snackbar_type: string,
   ) =>
@@ -180,6 +224,8 @@ export const ActionsPopover: FC<Props> = ({
           setIsVacateTenantModalOpen(false)
         case 'recordReading':
           setIsRecordReadingModalOpen(false)
+        case 'collectPayment':
+          setIsCollectPaymentModalOpen(false)
       }
     }
   }
@@ -195,6 +241,8 @@ export const ActionsPopover: FC<Props> = ({
           setIsVacateTenantModalOpen(false)
         case 'recordReading':
           setIsRecordReadingModalOpen(false)
+        case 'collectPayment':
+          setIsCollectPaymentModalOpen(false)
       }
     }
   }
@@ -248,7 +296,15 @@ export const ActionsPopover: FC<Props> = ({
         >
           Record reading
         </MenuItem>
-        <MenuItem dense>Collect payments</MenuItem>
+        <MenuItem
+          dense
+          onClick={() => {
+            handleClose()
+            setIsCollectPaymentModalOpen(true)
+          }}
+        >
+          Collect payments
+        </MenuItem>
       </Menu>
 
       {/* Modals */}
@@ -278,24 +334,31 @@ export const ActionsPopover: FC<Props> = ({
         onSnackbarClick={handleSnackbarClick('vacateTenant')}
       />
 
-      {/* Modal for record reading */}
+      <RecordReadingModal
+        tenant_name={tenant_name}
+        open={isRecordReadingModalOpen}
+        loading={isLoading}
+        onClick={handleModalClick('recordReading')}
+        onClose={handleModalClose('recordReading')}
+        onModalActionClick={recordMeterReading}
+        onSnackbarClick={handleSnackbarClick('recordReading')}
+        onSnackbarClose={handleSnackbarClose('recordReading')}
+        value={inputValue}
+        onChange={handleChange}
+      />
 
-      {tenant_name === 'n/a' ? (
-        <CustomSnackbar
-          open={isRecordReadingModalOpen}
-          onClose={handleSnackbarClose('recordReading')}
-          onClick={handleSnackbarClick('recordReading')}
-          message="Action requires an active tenancy"
-        />
-      ) : (
-        <Modal
-          open={isRecordReadingModalOpen}
-          onClose={handleModalClose('recordReading')}
-          onClick={handleModalClick('recordReading')}
-          modalTitle="Record reading"
-          modalContent={<TextField />}
-        />
-      )}
+      <CollectPaymentsModal
+        tenant_name={tenant_name}
+        open={isCollectPaymentModalOpen}
+        loading={isLoading}
+        onClick={handleModalClick('collectPayment')}
+        onClose={handleModalClose('collectPayment')}
+        onModalActionClick={recordPayment}
+        onSnackbarClick={handleSnackbarClick('collectPayment')}
+        onSnackbarClose={handleSnackbarClose('collectPayment')}
+        value={inputValue}
+        onChange={handleChange}
+      />
     </>
   )
 }

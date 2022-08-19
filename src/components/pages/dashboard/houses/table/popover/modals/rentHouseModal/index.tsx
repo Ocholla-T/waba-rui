@@ -121,6 +121,7 @@ export const RentHouseModal: FC<Props> = ({
                 InputLabelProps={{ sx: { fontSize: 15 } }}
                 onChange={onChange}
               />
+              <p>{value.meter_reading}</p>
             </>
           }
           modalActions={
