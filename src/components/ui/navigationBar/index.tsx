@@ -1,4 +1,4 @@
-import { FC, MouseEventHandler, ReactElement } from 'react'
+import { FC, MouseEventHandler, ReactElement, useRef } from 'react'
 
 import './_styles.scss'
 import { AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material'
@@ -6,12 +6,19 @@ import Logo from '@images/logo.png'
 import { AuthService } from '@services/auth'
 import LogoutIcon from '@mui/icons-material/PowerSettingsNewOutlined'
 import { cyan, pink } from '@mui/material/colors'
-import { useNavigate } from 'react-router-dom'
+import { useMatch, useNavigate } from 'react-router-dom'
 
 type NavigationBarProps = {}
 
 export const NavigationBar: FC<NavigationBarProps> = ({}): ReactElement => {
   const navigate = useNavigate()
+  const button = useRef<HTMLButtonElement | null>(null)
+  const matchesHouses = useMatch('/')
+  const matchedMeterReadings = useMatch('meter-readings')
+  const color = {
+    active: '#00aaa7',
+    inactive: 'rgba(0, 0, 0, 0.6)',
+  }
   const name =
     (AuthService.getLocalStorage().data.name as string) ??
     (AuthService.getLocalStorage().data.apartment.name as string)
@@ -57,6 +64,7 @@ export const NavigationBar: FC<NavigationBarProps> = ({}): ReactElement => {
         <Box sx={{ ml: '1rem', flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
           {pages.map((page) => (
             <Button
+              ref={button}
               type="button"
               key={page}
               sx={{
@@ -66,7 +74,12 @@ export const NavigationBar: FC<NavigationBarProps> = ({}): ReactElement => {
                 display: 'block',
                 fontWeight: '400',
                 fontSize: 14,
-                color: 'rgba(0, 0, 0, 0.6)',
+                color:
+                  page === 'Houses' && matchesHouses
+                    ? color.active
+                    : page === 'Meter Readings' && matchedMeterReadings
+                    ? color.active
+                    : color.inactive,
               }}
               onClick={() => goToPage(page)}
             >
