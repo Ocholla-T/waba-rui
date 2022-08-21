@@ -20,18 +20,4 @@ export class AuthService {
   static logout(): void {
     localStorage.removeItem('waba_caretaker')
   }
-
-  // static isLoggedIn(): boolean {
-  //   return moment().isBefore(this.getExpiration())
-  // }
-
-  // static isLoggedOut(): boolean {
-  //   return !this.isLoggedIn()
-  // }
-
-  // static getExpiration(): Moment {
-  //   const expires = JSON.parse(this.getLocalStorage().expiresIn as string)
-
-  //   return moment(expires)
-  // }
 }
