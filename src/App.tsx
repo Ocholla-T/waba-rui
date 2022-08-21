@@ -5,11 +5,18 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Dashboard } from '@pages/dashboard'
 import { Register } from '@pages/register'
 import { Login } from '@pages/login'
-import { MeterReadings } from '@pages/dashboard/meterReadings'
+import { MeterReadings } from '@pages/dashboard/meter-readings'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
 
-type AppProps = {}
+type Props = {}
 
-export const App: FC<AppProps> = ({}: AppProps) => {
+const theme = createTheme({
+  typography: {
+    fontFamily: ['Nunito', 'Open Sans', 'roboto', 'sans-serif'].join(','),
+  },
+})
+
+export const App: FC<Props> = ({}) => {
   const [isRegistering, setIsRegistering] = useState(false)
 
   const toggleIsRegisteringState: (state: boolean) => void = (state: boolean) => {
@@ -17,26 +24,28 @@ export const App: FC<AppProps> = ({}: AppProps) => {
   }
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="auth/register"
-          element={<Register toggleIsRegisteringState={toggleIsRegisteringState} />}
-        />
-        <Route path="auth/login" element={<Login />} />
-        <Route path="onboarding" element={<Onboarding />} />
-        <Route
-          path="verification"
-          element={
-            <Verification
-              isRegistering={isRegistering}
-              toggleIsRegisteringState={toggleIsRegisteringState}
-            />
-          }
-        />
-        <Route path="/" element={<Dashboard />} />
-        <Route path="meter-readings" element={<MeterReadings />} />
-      </Routes>
-    </BrowserRouter>
+    <ThemeProvider theme={theme}>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="auth/register"
+            element={<Register toggleIsRegisteringState={toggleIsRegisteringState} />}
+          />
+          <Route path="auth/login" element={<Login />} />
+          <Route path="onboarding" element={<Onboarding />} />
+          <Route
+            path="verification"
+            element={
+              <Verification
+                isRegistering={isRegistering}
+                toggleIsRegisteringState={toggleIsRegisteringState}
+              />
+            }
+          />
+          <Route path="/" element={<Dashboard />} />
+          <Route path="meter-readings" element={<MeterReadings />} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   )
 }
