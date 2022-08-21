@@ -1,7 +1,7 @@
-import { FC, ReactElement } from 'react'
+import { FC, MouseEventHandler, ReactElement } from 'react'
 
 import './_styles.scss'
-import { AppBar, Avatar, IconButton, Toolbar, Typography } from '@mui/material'
+import { AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material'
 import Logo from '@images/logo.png'
 import { AuthService } from '@services/auth'
 import LogoutIcon from '@mui/icons-material/PowerSettingsNewOutlined'
@@ -19,6 +19,19 @@ export const NavigationBar: FC<NavigationBarProps> = ({}): ReactElement => {
   const logoutCaretaker: VoidFunction = (): void => {
     AuthService.logout()
     navigate('/auth/login')
+  }
+
+  const pages = ['Houses', 'Meter Readings']
+
+  const goToPage = (page: string) => {
+    switch (page) {
+      case 'Houses':
+        navigate('/')
+        break
+      case 'Meter Readings':
+        navigate('/meter-readings')
+        break
+    }
   }
 
   return (
@@ -41,6 +54,26 @@ export const NavigationBar: FC<NavigationBarProps> = ({}): ReactElement => {
             {name}
           </Typography>
         </div>
+        <Box sx={{ ml: '1rem', flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          {pages.map((page) => (
+            <Button
+              type="button"
+              key={page}
+              sx={{
+                mx: '.5rem',
+                px: '1rem',
+                textTransform: 'none',
+                display: 'block',
+                fontWeight: '400',
+                fontSize: 14,
+                color: 'rgba(0, 0, 0, 0.6)',
+              }}
+              onClick={() => goToPage(page)}
+            >
+              {page}
+            </Button>
+          ))}
+        </Box>
         <div className="nav--profile_information">
           <Avatar
             sx={{
