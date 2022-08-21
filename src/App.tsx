@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Dashboard } from '@pages/dashboard'
 import { Register } from '@pages/register'
 import { Login } from '@pages/login'
+import { MeterReadings } from '@pages/dashboard/meterReadings'
 
 type AppProps = {}
 
@@ -34,6 +35,7 @@ export const App: FC<AppProps> = ({}: AppProps) => {
           }
         />
         <Route path="/" element={<Dashboard />} />
+        <Route path="meter-readings" element={<MeterReadings />} />
       </Routes>
     </BrowserRouter>
   )
