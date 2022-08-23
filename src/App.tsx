@@ -8,6 +8,7 @@ import { Login } from "@pages/login";
 import { MeterReadings } from "@pages/dashboard/meter-readings";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { ProtectedRoute } from "@components/navigation-guards/protected-route";
+import { OnboardingRoute } from "@components/navigation-guards/onboarding-route";
 
 type Props = {};
 
@@ -49,7 +50,9 @@ export const App: FC<Props> = ({}) => {
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<Dashboard />} />
             <Route path="meter-readings" element={<MeterReadings />} />
-            <Route path="onboarding" element={<Onboarding />} />
+            <Route element={<OnboardingRoute isRegistering={isRegistering} />}>
+              <Route path="onboarding" element={<Onboarding />} />
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>
