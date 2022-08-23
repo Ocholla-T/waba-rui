@@ -17,10 +17,10 @@ import { AuthService } from '@services/auth'
 import { AxiosError, AxiosResponse } from 'axios'
 import { HousesContext } from '../..'
 
-import { RentHouseModal } from './modals/rentHouseModal'
-import { VacateTenantModal } from './modals/vacateTenantModal'
-import { RecordReadingModal } from './modals/recordReadingModal'
-import { CollectPaymentsModal } from './modals/collectPaymentsModal'
+import { RentHouseModal } from './modals/rent-house-modal'
+import { VacateTenantModal } from './modals/vacate-tenant-modal'
+import { RecordReadingModal } from './modals/record-reading-modal'
+import { CollectPaymentsModal } from './modals/collect-payments-modal'
 
 type Props = {
   house_id: string

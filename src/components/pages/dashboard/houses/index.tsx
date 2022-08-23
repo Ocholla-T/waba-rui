@@ -134,7 +134,7 @@ export const Houses: FC = (): ReactElement => {
             Houses
           </Typography>
 
-          <CustomBreadcrumbs />
+          <CustomBreadcrumbs link="Houses" />
         </div>
         <Button
           variant="contained"

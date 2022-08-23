@@ -3,7 +3,11 @@ import { Breadcrumbs, Link, Typography } from '@mui/material'
 import React, { FC, ReactElement } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-export const CustomBreadcrumbs: FC = (): ReactElement => {
+type Props = {
+  link: string
+}
+
+export const CustomBreadcrumbs: FC<Props> = ({ link }): ReactElement => {
   const navigate = useNavigate()
 
   const goToDashboard = () => navigate('/')
@@ -23,7 +27,7 @@ export const CustomBreadcrumbs: FC = (): ReactElement => {
         >
           Dashboard
         </Link>
-        <Typography sx={{ fontSize: 14 }}>Houses</Typography>
+        <Typography sx={{ fontSize: 14 }}>{link}</Typography>
       </Breadcrumbs>
     </>
   )

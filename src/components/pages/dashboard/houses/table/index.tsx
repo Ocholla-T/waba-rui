@@ -21,20 +21,20 @@ type Props = {
 export const HouseTable: FC<Props> = memo(({ houses }): ReactElement => {
   return (
     <TableContainer component={Box}>
-      <Table
-        aria-label="table of houses, tenants and water bill balance"
-        padding="none"
-        stickyHeader
-      >
+      <Table aria-label="table of houses, tenants and water bill balance" size="small" stickyHeader>
         <TableHead>
-          <TableRow>
+          <TableRow
+            sx={{
+              py: '.5rem',
+            }}
+          >
             <TableCell
               sx={{
                 color: 'rgba(0, 0, 0, 0.6)',
-                fontSize: '.75rem',
+                fontSize: '.825rem',
                 letterSpacing: '.0178571429em ',
                 lineHeight: '1.25rem',
-                fontWeight: 700,
+                fontWeight: 500,
               }}
             >
               House number
@@ -42,10 +42,10 @@ export const HouseTable: FC<Props> = memo(({ houses }): ReactElement => {
             <TableCell
               sx={{
                 color: 'rgba(0, 0, 0, 0.6)',
-                fontSize: '.75rem',
+                fontSize: '.825rem',
                 letterSpacing: '.0178571429em ',
                 lineHeight: '1.25rem',
-                fontWeight: 700,
+                fontWeight: 500,
               }}
             >
               Tenant name
@@ -53,10 +53,10 @@ export const HouseTable: FC<Props> = memo(({ houses }): ReactElement => {
             <TableCell
               sx={{
                 color: 'rgba(0, 0, 0, 0.6)',
-                fontSize: '.75rem',
+                fontSize: '.825rem',
                 letterSpacing: '.0178571429em ',
                 lineHeight: '1.25rem',
-                fontWeight: 700,
+                fontWeight: 500,
               }}
             >
               Balance
@@ -64,10 +64,10 @@ export const HouseTable: FC<Props> = memo(({ houses }): ReactElement => {
             <TableCell
               sx={{
                 color: 'rgba(0, 0, 0, 0.6)',
-                fontSize: '.75rem',
+                fontSize: '.825rem',
                 letterSpacing: '.0178571429em ',
                 lineHeight: '1.25rem',
-                fontWeight: 700,
+                fontWeight: 500,
               }}
             >
               Actions
@@ -77,7 +77,7 @@ export const HouseTable: FC<Props> = memo(({ houses }): ReactElement => {
         <TableBody>
           {houses.map(({ house_number, tenant, id, tenancy }) => (
             <TableRow key={house_number} hover>
-              <TableCell sx={{ alignItems: 'center' }}>
+              <TableCell sx={{ alignItems: 'center', py: '.5rem' }}>
                 <IconButton size="small" sx={{ mr: '.25rem' }}>
                   <VillaOutlinedIcon fontSize="inherit" sx={{ color: 'rgb(46, 204, 113)' }} />
                 </IconButton>

@@ -14,7 +14,7 @@ export class AuthService {
   }
 
   static isAuthenticated(): boolean {
-    return localStorage.getItem('waba_caretaker') ? true : false
+    return this.getLocalStorage()?.data?.token ? true : false
   }
 
   static logout(): void {
