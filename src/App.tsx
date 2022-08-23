@@ -1,27 +1,30 @@
-import { FC, useState } from 'react'
-import { Onboarding } from '@pages/onboarding'
-import { Verification } from '@pages/verification'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { Dashboard } from '@pages/dashboard'
-import { Register } from '@pages/register'
-import { Login } from '@pages/login'
-import { MeterReadings } from '@pages/dashboard/meter-readings'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
+import { FC, useState } from "react";
+import { Onboarding } from "@pages/onboarding";
+import { Verification } from "@pages/verification";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Dashboard } from "@pages/dashboard";
+import { Register } from "@pages/register";
+import { Login } from "@pages/login";
+import { MeterReadings } from "@pages/dashboard/meter-readings";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { ProtectedRoute } from "@components/navigation-guards/protected-route";
 
-type Props = {}
+type Props = {};
 
 const theme = createTheme({
   typography: {
-    fontFamily: ['Nunito', 'Open Sans', 'roboto', 'sans-serif'].join(','),
+    fontFamily: ["Nunito", "Open Sans", "roboto", "sans-serif"].join(","),
   },
-})
+});
 
 export const App: FC<Props> = ({}) => {
-  const [isRegistering, setIsRegistering] = useState(false)
+  const [isRegistering, setIsRegistering] = useState(false);
 
-  const toggleIsRegisteringState: (state: boolean) => void = (state: boolean) => {
-    setIsRegistering(state)
-  }
+  const toggleIsRegisteringState: (state: boolean) => void = (
+    state: boolean
+  ) => {
+    setIsRegistering(state);
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -29,10 +32,11 @@ export const App: FC<Props> = ({}) => {
         <Routes>
           <Route
             path="auth/register"
-            element={<Register toggleIsRegisteringState={toggleIsRegisteringState} />}
+            element={
+              <Register toggleIsRegisteringState={toggleIsRegisteringState} />
+            }
           />
           <Route path="auth/login" element={<Login />} />
-          <Route path="onboarding" element={<Onboarding />} />
           <Route
             path="verification"
             element={
@@ -42,10 +46,13 @@ export const App: FC<Props> = ({}) => {
               />
             }
           />
-          <Route path="/" element={<Dashboard />} />
-          <Route path="meter-readings" element={<MeterReadings />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="meter-readings" element={<MeterReadings />} />
+            <Route path="onboarding" element={<Onboarding />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
-  )
-}
+  );
+};
