@@ -14,9 +14,12 @@
     "paths": {
       "@ui/*": ["./components/ui/*"],
       "@pages/*": ["./components/pages/*"],
+      "@components/*": ["./components/*"],
+
       "@images/*": ["./assets/images/*"],
       "@services/*": ["./services/*"],
-      "@utils/*": ["./components/utils/*"]
+      "@utils/*": ["./components/utils/*"],
+      "@hooks/*": ["./hooks/*"]
     },
     "resolveJsonModule": true,
     "skipLibCheck": true,
