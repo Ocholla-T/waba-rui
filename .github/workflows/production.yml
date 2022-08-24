@@ -28,6 +28,7 @@ jobs:
 
   copy:
     runs-on: self-hosted
+    needs: build
 
     steps:
       - name: copy files to location with permission
