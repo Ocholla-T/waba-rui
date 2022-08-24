@@ -22,10 +22,7 @@ type Props = {
 export const HouseTable: FC<Props> = memo(({ houses }): ReactElement => {
   return (
     <>
-      <TableContainer
-        component={Box}
-        sx={{ display: { xs: 'none', sm: 'block' } }}
-      >
+      <TableContainer component={Box} sx={{ display: { xs: 'none' } }}>
         <Table
           aria-label='table of houses, tenants and water bill balance'
           size='small'
