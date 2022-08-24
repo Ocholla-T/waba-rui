@@ -1,5 +1,9 @@
 import {
   Box,
+  Button,
+  Chip,
+  Menu,
+  MenuItem,
   Table,
   TableBody,
   TableCell,
@@ -10,15 +14,40 @@ import {
 } from '@mui/material'
 import { CustomBreadcrumbs } from '@ui/breadcrumbs'
 import { NavigationBar } from '@ui/navigationBar'
-import { FC } from 'react'
+
+import { FC, MouseEventHandler, useState } from 'react'
+
+import { useFetchMeterReading } from '@hooks/use-fetch-meter-readings'
+import { MeterReading } from './types/MeterReading'
 
 type Props = {}
 
 export const MeterReadings: FC<Props> = ({}) => {
+  const meter_reading: MeterReading[] = useFetchMeterReading()
+  const [anchor, setAnchor] = useState<HTMLButtonElement | null>(null)
+  const open = Boolean(anchor)
+  const id: string | undefined = open ? 'bill-popover' : undefined
+
+  const handleClose:
+    | ((event: {}, reason: 'backdropClick' | 'escapeKeyDown') => void)
+    | undefined = () => {
+    setAnchor(null)
+  }
+
+  const handleClick: MouseEventHandler<HTMLButtonElement> = (event) => {
+    setAnchor(event.currentTarget)
+  }
+
   return (
     <>
       <NavigationBar />
-      <Box sx={{ minHeight: 'calc(100vh - 4rem)', px: { lg: '8rem', xs: '1.5rem' }, py: '3rem' }}>
+      <Box
+        sx={{
+          minHeight: 'calc(100vh - 4rem)',
+          px: { lg: '8rem', xs: '1.5rem' },
+          py: '3rem',
+        }}
+      >
         <Box
           sx={{
             display: 'flex',
@@ -29,7 +58,7 @@ export const MeterReadings: FC<Props> = ({}) => {
         >
           <div>
             <Typography
-              variant="h6"
+              variant='h6'
               sx={{
                 fontWeight: 500,
                 letterSpacing: '0.0125em',
@@ -39,13 +68,13 @@ export const MeterReadings: FC<Props> = ({}) => {
               Meter Readings
             </Typography>
 
-            <CustomBreadcrumbs link="Meter Readings" />
+            <CustomBreadcrumbs link='Meter Readings' />
           </div>
         </Box>
         <TableContainer component={Box}>
           <Table
-            aria-label="table of houses, tenants and water bill balance"
-            size="small"
+            aria-label='table of houses, tenants and water bill balance'
+            size='small'
             stickyHeader
             sx={{
               '& .MuiTableCell-root': {
@@ -117,7 +146,139 @@ export const MeterReadings: FC<Props> = ({}) => {
                 </TableCell>
               </TableRow>
             </TableHead>
-            <TableBody></TableBody>
+            <TableBody>
+              {meter_reading.map(
+                ({
+                  id,
+                  house,
+                  bill,
+                  bill_delivery_status,
+                  tenant,
+                  created_at,
+                  previous_units,
+                  current_units,
+                  consumed_units,
+                }) => {
+                  return (
+                    <TableRow key={id}>
+                      <TableCell>
+                        <Chip
+                          label={bill_delivery_status}
+                          size='small'
+                          sx={{
+                            backgroundColor: 'rgb(46, 204, 113)',
+                            color: '#ffffff',
+                            fontWeight: '500',
+                            borderRadius: '5px',
+                            px: '.5rem',
+                            py: '1rem',
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell>{house.house_number}</TableCell>
+                      <TableCell>
+                        <Typography sx={{ fontSize: 14 }}>
+                          {tenant.name}
+                        </Typography>
+                        <Typography sx={{ fontSize: 14 }}>
+                          {tenant.phone}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant='text'
+                          size='small'
+                          color='error'
+                          sx={{
+                            borderBottom: '1px dashed red',
+                            borderRadius: '0',
+                            px: '.5rem',
+                          }}
+                          onClick={handleClick}
+                        >
+                          {`KSH ${bill.total_charge}`}
+                        </Button>
+                        <Menu
+                          id={id}
+                          open={open}
+                          keepMounted
+                          anchorEl={anchor}
+                          anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'left',
+                          }}
+                          transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                          }}
+                          onClose={handleClose}
+                          sx={{ minWidth: '83px', maxWidth: '80%' }}
+                        >
+                          <MenuItem
+                            sx={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              gap: '2rem',
+                            }}
+                          >
+                            <Typography sx={{ fontSize: 14 }}>
+                              Previous units
+                            </Typography>
+                            <Typography
+                              sx={{
+                                fontSize: 14,
+                                color: 'rgba(0, 0, 0, 0.6)',
+                              }}
+                            >
+                              {previous_units}
+                            </Typography>
+                          </MenuItem>
+                          <MenuItem
+                            sx={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              gap: '2rem',
+                            }}
+                          >
+                            <Typography sx={{ fontSize: 14 }}>
+                              Current units
+                            </Typography>
+                            <Typography
+                              sx={{
+                                fontSize: 14,
+                                color: 'rgba(0, 0, 0, 0.6)',
+                              }}
+                            >
+                              {current_units}
+                            </Typography>
+                          </MenuItem>
+                          <MenuItem
+                            sx={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              gap: '2rem',
+                            }}
+                          >
+                            <Typography sx={{ fontSize: 14 }}>
+                              Units consumed
+                            </Typography>
+                            <Typography
+                              sx={{
+                                fontSize: 14,
+                                color: 'rgba(0, 0, 0, 0.6)',
+                              }}
+                            >
+                              {consumed_units}
+                            </Typography>
+                          </MenuItem>
+                        </Menu>
+                      </TableCell>
+                      <TableCell>{created_at}</TableCell>
+                    </TableRow>
+                  )
+                }
+              )}
+            </TableBody>
           </Table>
         </TableContainer>
       </Box>

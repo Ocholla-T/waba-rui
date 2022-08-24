@@ -7,6 +7,6 @@ export const ProtectedRoute: FC<Props> = ({}) => {
   const isAuthenticated = AuthService.isAuthenticated();
 
   return (
-    <>{!isAuthenticated ? <Navigate to="/auth/login" replace /> : <Outlet />}</>
+    <>{isAuthenticated ? <Outlet /> : <Navigate to="/auth/login" replace />}</>
   );
 };
