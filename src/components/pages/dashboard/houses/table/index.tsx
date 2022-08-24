@@ -113,10 +113,7 @@ export const HouseTable: FC<Props> = memo(({ houses }): ReactElement => {
       </TableContainer>
 
       {/* Mobile Table */}
-      <TableContainer
-        component={Box}
-        sx={{ display: { xs: 'block', sm: 'none' } }}
-      >
+      <TableContainer component={Box} sx={{ display: { sm: 'none' } }}>
         <Table size='medium'>
           {houses.map(({ house_number, tenant, id, tenancy }) => (
             <TableRow>
