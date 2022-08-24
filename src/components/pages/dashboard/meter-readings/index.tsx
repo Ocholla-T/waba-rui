@@ -71,7 +71,10 @@ export const MeterReadings: FC<Props> = ({}) => {
             <CustomBreadcrumbs link='Meter Readings' />
           </div>
         </Box>
-        <TableContainer component={Box} sx={{ display: { xs: 'none' } }}>
+        <TableContainer
+          component={Box}
+          sx={{ display: { xs: 'none', sm: 'block' } }}
+        >
           <Table
             aria-label='table of houses, tenants and water bill balance'
             size='small'
